@@ -5,7 +5,13 @@ jdk:
   - openjdk7
   - openjdk6
 
-script: "mvn test"
-
 branches:
   except: webanalytics
+
+before_install:
+- git checkout master
+- git merge ${TRAVIS_BRANCH}
+- git branch -v
+- git remote show origin
+
+script: "mvn test"
