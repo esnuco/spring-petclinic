@@ -12,6 +12,7 @@ before_install:
 - git config --global user.email "travis@example.net"
 - git config --global user.name "travis"
 - git checkout master
+- git branch -v
 - git merge $TRAVIS_BRANCH
 - git branch -v
 - git remote show origin
