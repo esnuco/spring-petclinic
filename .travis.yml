@@ -17,6 +17,7 @@ before_install:
 - git merge $TRAVIS_BRANCH
 - git branch -v
 - git remote show origin
+- echo $TRAVIS_COMMIT_MESSAGE
 
 # Execute everything in the build lifecycle before the test build phase
 # We do this to make the output under the actual script show only output related to the test build phase
