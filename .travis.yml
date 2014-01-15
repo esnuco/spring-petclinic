@@ -29,3 +29,9 @@ before_script:
 
 # Only execute till build phase test
 script: "mvn test"
+
+
+# Deploy artifact to staging
+after_success:
+# Only deploy when on master branch
+- if [[ "$TRAVIS_BRANCH" == "master" ]]; then echo "Deploying master to staging."; fi
