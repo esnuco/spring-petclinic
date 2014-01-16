@@ -8,6 +8,10 @@ jdk:
 branches:
   except: webanalytics
 
+env: 
+  global: 
+    secure: CPaQpXrUdqpKF5JoOYQOb0OsbIwTuBYEyKABbTqbfMpdupQptNhmtEFI2UWM+1QTLv9R7WweBHPF1N/LHPs9ylBEdffedLHbeDtac5q8XXS7Rw9Mr/eb02JrkAJNqVgwDAwb/1vHCwTbG8ma+CJ0uGn7QjAaVjo2GKRzlhVXvpc=
+
 # Merge the current branch into master before we test
 before_install:
 - git config --global user.email "travis@example.net"
@@ -24,14 +28,17 @@ before_install:
 install: /bin/true
 
 before_script:
+# Only execute everything before the test build phase
 - mvn process-resources
 - mvn compile
 
-# Only execute till build phase test
+# Execute the test build phase
 script: "mvn test"
 
 
-# Deploy artifact to staging
+# Merge branch to master or Deploy artifact to staging
 after_success:
+# Merge to master if not on branch master
+- if [[ "$TRAVIS_BRANCH" != "master" ]]; then git push https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${TRAVIS_REPO_SLUG}.git $TRAVIS_BRANCH:master; fi
 # Only deploy when on master branch
 - if [[ "$TRAVIS_BRANCH" == "master" ]]; then echo "Deploying master to staging."; fi
