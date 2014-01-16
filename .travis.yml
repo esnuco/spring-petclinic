@@ -10,16 +10,23 @@ env:
   global: 
     secure: CPaQpXrUdqpKF5JoOYQOb0OsbIwTuBYEyKABbTqbfMpdupQptNhmtEFI2UWM+1QTLv9R7WweBHPF1N/LHPs9ylBEdffedLHbeDtac5q8XXS7Rw9Mr/eb02JrkAJNqVgwDAwb/1vHCwTbG8ma+CJ0uGn7QjAaVjo2GKRzlhVXvpc=
 
-# Merge the current branch into master before we test
 before_install:
+# Get last commit message
+- export COMMIT_MESSAGE=`git log -1 --format=%s`
+- echo $COMMIT_MESSAGE
+# Set env variable MERGE_TO_MASTER to true if the text [merge] is in the last commit message
+- if echo "$COMMIT_MESSAGE" | grep -i -q [merge]; then export MERGE_TO_MASTER=true; fi
+- echo $MERGE_MASTER
+# Set git username and email so we can use git commands
 - git config --global user.email "travis@example.net"
 - git config --global user.name "travis"
+# Merge the current branch into master before we test
 - git checkout master
 - git branch -v
 - git merge $TRAVIS_BRANCH
 - git branch -v
 - git remote show origin
-- echo $TRAVIS_COMMIT_MESSAGE
+#- echo $TRAVIS_COMMIT_MESSAGE
 
 # Execute everything in the build lifecycle before the test build phase
 # We do this to make the output under the actual script show only output related to the test build phase
@@ -37,6 +44,6 @@ script: "mvn test"
 # Merge branch to master or Deploy artifact to staging
 after_success:
 # Merge to master if not on branch master
-- if [[ "$TRAVIS_BRANCH" != "master" ]]; then git checkout $TRAVIS_BRANCH && git pull --rebase && git push https://$GITHUB_TOKEN:x-oauth-basic@github.com/${TRAVIS_REPO_SLUG}.git master; fi
+- if [[ "$TRAVIS_BRANCH" != "master" ]] && [[ "$MERGE_TO_MASTER" ]]; then git checkout $TRAVIS_BRANCH && git pull --rebase && git push https://$GITHUB_TOKEN:x-oauth-basic@github.com/${TRAVIS_REPO_SLUG}.git master; fi
 # Only deploy when on master branch
 - if [[ "$TRAVIS_BRANCH" == "master" ]]; then echo "Deploying master to staging."; fi
