@@ -28,9 +28,9 @@ before_install:
 - git remote show origin
 #- echo $TRAVIS_COMMIT_MESSAGE
 
-# Execute everything in the build lifecycle before the test build phase
-# We do this to make the output under the actual script show only output related to the test build phase
-install: /bin/true
+# We don't want to use the Travis default install target of mvn install -Dskiptests because that would execute everything in the build lifecycle before the actual test
+# So we print the maven version info instead
+install: mvn -v
 
 before_script:
 # Only execute everything before the test build phase
