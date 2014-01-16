@@ -12,11 +12,11 @@ env:
 
 before_install:
 # Get last commit message
-- export COMMIT_MESSAGE=`git log -1 --format=%s`
+- export COMMIT_MESSAGE=`git log -1 --format=%s%n%b`
 - echo $COMMIT_MESSAGE
 # Set env variable MERGE_TO_MASTER to true if the text [merge] is in the last commit message
-- if echo "$COMMIT_MESSAGE" | grep -i -q [merge]; then export MERGE_TO_MASTER="true"; fi
-- echo $MERGE_MASTER
+- if echo "$COMMIT_MESSAGE" | grep -i -q "\[merge]"; then export MERGE_TO_MASTER="true"; fi
+- echo $MERGE_TO_MASTER
 # Set git username and email so we can use git commands
 - git config --global user.email "travis@example.net"
 - git config --global user.name "travis"
