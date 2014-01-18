@@ -35,7 +35,7 @@ after_success:
   echo "Merging $TRAVIS_BRANCH to master" && git push https://$GITHUB_TOKEN:x-oauth-basic@github.com/${TRAVIS_REPO_SLUG}.git
   master; fi
 - if [[ "$TRAVIS_BRANCH" == "master" ]]; then echo "Deploying master to staging."
-  && mvn package
+  && mvn package -DskipTests
   && sudo apt-get install sshpass
   && curl "$TOMCAT_USER:$TOMCAT_PASSWORD@$TOMCAT_HOST:8080/manager/text/undeploy?path=/petclinic"
   && wait ${!}
