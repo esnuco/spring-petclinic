@@ -1,8 +1,11 @@
 language: java
+
 jdk:
 - openjdk7
+
 branches:
   except: webanalytics
+  
 env:
   global:
   - secure: CPaQpXrUdqpKF5JoOYQOb0OsbIwTuBYEyKABbTqbfMpdupQptNhmtEFI2UWM+1QTLv9R7WweBHPF1N/LHPs9ylBEdffedLHbeDtac5q8XXS7Rw9Mr/eb02JrkAJNqVgwDAwb/1vHCwTbG8ma+CJ0uGn7QjAaVjo2GKRzlhVXvpc=
@@ -15,8 +18,7 @@ env:
 before_install:
 - export COMMIT_MESSAGE=`git log -1 --format=%s%n%b`
 - echo $COMMIT_MESSAGE
-- if echo "$COMMIT_MESSAGE" | grep -i -q "\[merge]"; then export MERGE_TO_MASTER="true";
-  fi
+- if echo "$COMMIT_MESSAGE" | grep -i -q "\[merge]"; then export MERGE_TO_MASTER="true"; fi
 - echo $MERGE_TO_MASTER
 - git config --global user.email "travis@example.net"
 - git config --global user.name "travis"
@@ -25,17 +27,21 @@ before_install:
 - git merge --no-ff $TRAVIS_BRANCH
 - git branch -v
 - git remote show origin
+
 install: mvn -v
+
 before_script:
 - mvn process-resources
 - mvn compile
-script: mvn test
+
+script: mvn package
+
 after_success:
 - if [[ "$TRAVIS_BRANCH" != "master" ]] && [[ "$MERGE_TO_MASTER" == "true" ]]; then
-  echo "Merging $TRAVIS_BRANCH to master" && git push https://$GITHUB_TOKEN:x-oauth-basic@github.com/${TRAVIS_REPO_SLUG}.git
-  master; fi
+  echo "Merging $TRAVIS_BRANCH to master"
+  && git push https://$GITHUB_TOKEN:x-oauth-basic@github.com/${TRAVIS_REPO_SLUG}.git master;
+  fi
 - if [[ "$TRAVIS_BRANCH" == "master" ]]; then echo "Deploying master to staging."
-  && mvn package -DskipTests
   && sudo apt-get install sshpass
   && curl "$TOMCAT_USER:$TOMCAT_PASSWORD@$TOMCAT_HOST:8080/manager/text/undeploy?path=/petclinic"
   && wait ${!}
