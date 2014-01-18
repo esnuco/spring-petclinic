@@ -44,6 +44,6 @@ script: "mvn test"
 # Merge branch to master or Deploy artifact to staging
 after_success:
 # Merge to master if not on branch master
-- if [[ "$TRAVIS_BRANCH" != "master" ]] && [[ "$MERGE_TO_MASTER" == "true" ]]; then echo "Merging $TRAVIS_BRANCH to master" && git checkout master && git merge --no-ff $TRAVIS_BRANCH && git push https://$GITHUB_TOKEN:x-oauth-basic@github.com/${TRAVIS_REPO_SLUG}.git master; fi
+- if [[ "$TRAVIS_BRANCH" != "master" ]] && [[ "$MERGE_TO_MASTER" == "true" ]]; then echo "Merging $TRAVIS_BRANCH to master" && git push https://$GITHUB_TOKEN:x-oauth-basic@github.com/${TRAVIS_REPO_SLUG}.git master; fi
 # Only deploy when on master branch
 - if [[ "$TRAVIS_BRANCH" == "master" ]]; then echo "Deploying master to staging."; fi
