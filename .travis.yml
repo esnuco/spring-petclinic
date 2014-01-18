@@ -1,49 +1,36 @@
 language: java
-
 jdk:
-  - openjdk7
-
+- openjdk7
 branches:
   except: webanalytics
-
-env: 
-  global: 
-    secure: CPaQpXrUdqpKF5JoOYQOb0OsbIwTuBYEyKABbTqbfMpdupQptNhmtEFI2UWM+1QTLv9R7WweBHPF1N/LHPs9ylBEdffedLHbeDtac5q8XXS7Rw9Mr/eb02JrkAJNqVgwDAwb/1vHCwTbG8ma+CJ0uGn7QjAaVjo2GKRzlhVXvpc=
+env:
+  global:
+  - secure: CPaQpXrUdqpKF5JoOYQOb0OsbIwTuBYEyKABbTqbfMpdupQptNhmtEFI2UWM+1QTLv9R7WweBHPF1N/LHPs9ylBEdffedLHbeDtac5q8XXS7Rw9Mr/eb02JrkAJNqVgwDAwb/1vHCwTbG8ma+CJ0uGn7QjAaVjo2GKRzlhVXvpc=
+  - secure: DY/YZ/7jcSH1ZWe+4KY0435Nz2X6zGO1INXw738P+AZAcACZeyWtMq5U4X1T3tCoVHwHuIGV29caM1kwOc1QJgXi+ncKjRg6Nxg8f7+kug4kcskkDYjgAg8uwHbi9f0kE0KeHYe3Ig/8T/56lZo5xJKU41g8zXB73ebyCwpwPCM=
+  - secure: QQR5JZw0pE37KD0YRC/hYmDGQz1MrN4otLlD0gqTQBJvYisNpQvTYm6/Z1QdyjqmAKrtCUD0gW6TusVI9omlJ2sGGMEI2Dd5Zpwks3k+uS3o/Y+/ptHpwZfkfgsmJ2nODOvYWNY7Sf/9qrG3iLj11sqeSDPpQ4yFB3SLfjzTQPY=
+  - secure: CK/NQkIpu4kkrS7fRNGGeoUOkjqsfnRi87v+afNNoPSLSksQ1RWBzPCiAmLlrOU7MI3dc5ooNWcOs3/ypY4ZdJwT8MMHlP1zbAhvAtDWDmniROEvV8HVivCQPzz8ePFrJOywfc/6C6KHZg7Jh1UirFCSNWs4p5vq0qGl/9pQPSg=
 
 before_install:
-# Get last commit message
 - export COMMIT_MESSAGE=`git log -1 --format=%s%n%b`
 - echo $COMMIT_MESSAGE
-# Set env variable MERGE_TO_MASTER to true if the text [merge] is in the last commit message
-- if echo "$COMMIT_MESSAGE" | grep -i -q "\[merge]"; then export MERGE_TO_MASTER="true"; fi
+- if echo "$COMMIT_MESSAGE" | grep -i -q "\[merge]"; then export MERGE_TO_MASTER="true";
+  fi
 - echo $MERGE_TO_MASTER
-# Set git username and email so we can use git commands
 - git config --global user.email "travis@example.net"
 - git config --global user.name "travis"
-# Merge the current branch into master before we test
 - git checkout master
 - git branch -v
 - git merge --no-ff $TRAVIS_BRANCH
 - git branch -v
 - git remote show origin
-#- echo $TRAVIS_COMMIT_MESSAGE
-
-# We don't want to use the Travis default install target of mvn install -Dskiptests because that would execute everything in the build lifecycle before the actual test
-# So we print the maven version info instead
 install: mvn -v
-
 before_script:
-# Only execute everything before the test build phase
 - mvn process-resources
 - mvn compile
-
-# Execute the test build phase
-script: "mvn test"
-
-
-# Merge branch to master or Deploy artifact to staging
+script: mvn test
 after_success:
-# Merge to master if not on branch master
-- if [[ "$TRAVIS_BRANCH" != "master" ]] && [[ "$MERGE_TO_MASTER" == "true" ]]; then echo "Merging $TRAVIS_BRANCH to master" && git push https://$GITHUB_TOKEN:x-oauth-basic@github.com/${TRAVIS_REPO_SLUG}.git master; fi
-# Only deploy when on master branch
-- if [[ "$TRAVIS_BRANCH" == "master" ]]; then echo "Deploying master to staging."; fi
+- if [[ "$TRAVIS_BRANCH" != "master" ]] && [[ "$MERGE_TO_MASTER" == "true" ]]; then
+  echo "Merging $TRAVIS_BRANCH to master" && git push https://$GITHUB_TOKEN:x-oauth-basic@github.com/${TRAVIS_REPO_SLUG}.git
+  master; fi
+- if [[ "$TRAVIS_BRANCH" == "master" ]]; then echo "Deploying master to staging." && curl "$TOMCAT_USER:$TOMCAT_PASSWORD@TOMCAT_HOST:8080/manager/text/undeploy?path=/petclinic" && wait ${!} && curl -T "target/petclinic.war" "$TOMCAT_USER:$TOMCAT_PASSWORD@$TOMCAT_HOST:8080/manager/text/deploy?path=/petclinic";
+  fi
