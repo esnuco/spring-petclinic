@@ -23,7 +23,7 @@ before_install:
 # Merge the current branch into master before we test
 - git checkout master
 - git branch -v
-- git merge $TRAVIS_BRANCH
+- git merge --no-ff $TRAVIS_BRANCH
 - git branch -v
 - git remote show origin
 #- echo $TRAVIS_COMMIT_MESSAGE
