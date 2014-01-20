@@ -15,6 +15,11 @@ env:
   - secure: NlB12+QwbjGFpTVSMVexy7EmaOuIrOOnSR73Z/d6k9k1UjRBfVG7kViGs2l/jnVdbAYNOcnFN706WnpTDD1UtyA+bDtIpATzNB0LeQHIUozmPoSnXJicvZEDnz/8Fnh7epSyEYVl3kHfIHPNu2MotBd6npnkWFsLxikATDj4a88=
   - secure: MF9zD9sbPfhIGvOiUjzC9h33chcawK3N2rJROkCWYBWY5j8awlkAAUZk38aveuLB4RVg/pcC3mI40o7wv+ZfHtHFi4YX9JgshjbtlO/f4dEWLv1XwnCPmUKNgrfCM14hyM0It4kp0/q+wus+aEfQrYJ5mD+TnP1nsxQtZwddQWE=
 
+notifications:
+  email:
+    on_success: always
+    on_failure: always
+
 before_install:
 - export COMMIT_MESSAGE=`git log -1 --format=%s%n%b`
 - echo $COMMIT_MESSAGE
