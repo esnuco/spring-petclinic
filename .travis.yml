@@ -17,6 +17,8 @@ env:
 
 notifications:
   email:
+    recipients:
+      - esnuco.pet@gmail.com
     on_success: always
     on_failure: always
 
